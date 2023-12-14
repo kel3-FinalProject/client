@@ -3,6 +3,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from './pages/Home';
 import RoomDetails from './pages/RoomDetails';
+import Rooms from './components/Rooms';
+import Reservasi from "./components/Reservasi";
+import Receipe from './components/ReceipeBooking';
 
 function App() {
   const location = useLocation();
@@ -15,7 +18,10 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Home" element={<Home />} />
+        <Route path="/rooms" element={<Rooms />} />
         <Route path="/room/:id" element={<RoomDetails />} />
+        <Route path="/Reservasi" element={<Reservasi />} />
+        <Route path="/Receipe" element={<Receipe />} />
       </Routes>
     </div>
   );

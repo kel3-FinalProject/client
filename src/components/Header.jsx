@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Logo from '../assets/img/logo/logo.png';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [header, setHeader] = useState(false);
@@ -26,13 +27,13 @@ const Header = () => {
           {<img className='w-[160px]' src={Logo} alt='Logo' />}
         </a>
         <nav className={`${header ? 'text-black' : 'text-white'} flex gap-x-3 font-tertiary tracking-[3px] text-[14px] items-center uppercase lg:gap-6`}>
-          <a href='' className='hover:text-teal-700 transition'>
+          <a href='/Home' className='hover:text-teal-700 transition'>
             Home
           </a>
-          <a href='' className='hover:text-teal-700 transition'>
+          <Link to='/Rooms' className='hover:text-teal-700 transition'>
             Kamar
-          </a>
-          <a href='' className='hover:text-teal-700 transition'>
+          </Link>
+          <a href='/Reservasi' className='hover:text-teal-700 transition'>
             Reservasi
           </a>
         </nav>
