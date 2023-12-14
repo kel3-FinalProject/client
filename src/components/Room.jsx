@@ -1,11 +1,8 @@
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { BsArrowsFullscreen, BsPeople } from 'react-icons/bs';
-import { RoomContext } from '../pages/RoomContext';
 
 const Room = ({ room }) => {
   const { id, name, image, size, maxPerson, description} = room;
-  const { handleDelete } = useContext(RoomContext);
 
   return (
     <div className='bg-white drop-shadow-xl min-h-[500px] group'>
@@ -42,20 +39,16 @@ const Room = ({ room }) => {
         </div>
       </div>
       <div className='text-center'>
-        <Link to={`/room/${id}`}>
-          <h3 className='h3 text-black'>{name}</h3>
-        </Link>
+        <h3 className='h3 text-black'>{name}</h3>
         <p className='text-black max-w-[300px] mx-auto mb-3 lg:mb-6'>{description.slice(0, 56)}</p>
       </div>
       <div className='flex justify-center items-center space-x-4 max-w-[240px] mx-auto'>
-        <button
-          onClick={() => handleDelete(id)}
-          className='bg-red-300 hover:bg-red-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]'
-        >
-          Delete
-        </button>
-        <Link to={`/edit/${id}`} className='bg-emerald-300 hover:bg-emerald-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]'>
-          Edit
+        <Link to={`/room/${id}`}>
+          <button
+            className='bg-blue-300 hover:bg-blue-500 font-bold py-2 px-2 rounded text-black flex justify-center items-center '
+          >
+            Detail dan Booking
+          </button>
         </Link>
       </div>
     </div>

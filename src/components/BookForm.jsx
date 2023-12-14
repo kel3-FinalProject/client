@@ -22,7 +22,7 @@ const BookForm = () => {
 
         <button onClick={(e)=> handleClick(e)}
           type='submit' 
-          className='flex-1 border-r bg-blue-200 hover:bg-blue-400'>Reservasi</button>
+          className='flex-1 border-r bg-blue-200 hover:bg-blue-400'>Cari</button>
     </div>
   </form>;
 };

@@ -1,4 +1,3 @@
-// TypeDropdown.jsx
 import { useContext } from 'react';
 import { RoomContext } from '../pages/RoomContext';
 import { Menu } from '@headlessui/react';
@@ -17,7 +16,7 @@ const TypeDropdown = () => {
     <Menu as='div' className='w-full h-full bg-white relative '>
       <Menu.Button className='w-full h-full flex items-center justify-between px-8'>
         {type}
-        <BsChevronDown className='hover:text-blue-900' />
+        <BsChevronDown className='hover:text-blue-400' />
       </Menu.Button>
 
       <Menu.Items as='ul' className='bg-white absolute w-full flex flex-col z-40'>

@@ -7,7 +7,7 @@ const Footer = () => {
         <a href="/">
           <img src={Logo} alt=''/>
         </a>
-        Copyright &copy; 2023. All rights reserved.
+        Copyright &copy; Dream Hotel 2023. All rights reserved.
       </div>
     </footer>
   )
