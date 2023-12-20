@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { AiOutlineUnlock } from "react-icons/ai";
 import { useState } from "react";
+import { login } from "../utils/network";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
@@ -15,13 +18,37 @@ const Login = () => {
     setPassword(event.target.value);
   }
 
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await login({ email, password });
+
+      if (!response.error) {
+        alert("Login successful");
+        const token = localStorage.getItem("accessToken");
+        const decoded = jwtDecode(token);
+
+        if (decoded.isAdmin) {
+          navigate("/Home-Admin");
+        } else {
+          navigate("/Home");
+        }
+      } else {
+        alert(`Login failed. Status code: ${response.code}`);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred during login");
+    }
+  };
+
   return (
     <div>
       <div className="bg-slate-700 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative">
         <h1 className="text-3xl text-white font-bold text-center mb-6">
           Login
         </h1>
-        <form action="">
+        <form onSubmit={handleLogin}>
           <div className="relative my-6 ">
             <input
               type="email"
