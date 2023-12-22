@@ -12,6 +12,8 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "autoprefixer": "^10.4.16",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "postcss": "^8.4.32",
     "react": "^18.2.0",
     "react-datepicker": "^4.24.0",
