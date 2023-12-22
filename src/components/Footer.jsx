@@ -1,4 +1,4 @@
-import Logo from "../assets/img/logo/logo.png";
+import Logo from "../assets/img/logo/logo_hotel.png";
 
 const Footer = () => {
   return (

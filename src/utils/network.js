@@ -81,17 +81,24 @@ async function addKamar(
   formData.append("Class", Class);
   formData.append("file", file);
 
-  const response = await fetchWithToken(`${BASE_URL}/kamar`, formData, {
+  const response = await fetchWithToken(`${BASE_URL}/kamar`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${getAccessToken}`,
+      Authorization: `Bearer ${getAccessToken()}`,
     },
+    body: formData,
   });
+  try {
   const responseJson = await response.json();
-  if (response.status >= 400) {
-    return { error: true, code: response.status, data: null };
+
+    if (response.status >= 400) {
+      return { error: true, code: response.status, data: null };
+    }
+    return { error: false, code: response.status, data: responseJson };
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error);
+    return { error: true, code: 500, data: null };
   }
-  return { error: false, code: response.status, data: responseJson.data };
 }
 
 async function getKamar() {

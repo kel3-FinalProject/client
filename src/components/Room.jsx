@@ -55,7 +55,7 @@ const Room = ({ room }) => {
             Delete
           </button>
           <Link
-            to={"/Add-Kamar"}
+            to={"/Edit-Kamar"}
             className="bg-emerald-300 hover:bg-emerald-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
           >
             Edit
