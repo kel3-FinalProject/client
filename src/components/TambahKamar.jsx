@@ -56,7 +56,6 @@ function TambahKamar() {
       }
   };
   
-
   return (
     <div className="bg-[#cecece] pt-5">
       <div className="bg-[#638ecb] max-w-4xl p-6 mx-auto rounded-md shadow-2xl">

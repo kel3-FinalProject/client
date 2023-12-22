@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Logo from "../assets/img/logo/logo_hotel.png";
 import { Link, useLocation, useNavigate} from "react-router-dom";
 
+
 const Header = () => {
   const [header, setHeader] = useState(false);
   const navigate = useNavigate();
