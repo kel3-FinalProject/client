@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addKamar } from "../utils/network";
 
 function TambahKamar() {
   const navigate = useNavigate();
@@ -18,12 +19,12 @@ function TambahKamar() {
   };
 
   const [roomData, setRoomData] = useState({
-    nama: "",
+    nameKamar: "",
     harga: "",
     size: "",
     kapasitas: "",
-    tipe: "VIP",
-    deskripsi: "",
+    Class: "VIP",
+    description: "",
     fasilitas: "",
   });
 
@@ -35,13 +36,28 @@ function TambahKamar() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("room", roomData);
-    formData.append("file", file);
-    console.log(formData);
+    // Ekstrak nilai dari roomData
+    const { nameKamar, harga, size, description, kapasitas, fasilitas, Class } = roomData;
+      // Panggil fungsi addKamar dengan nilai yang diekstrak dan file
+      const result = await addKamar(
+        nameKamar,
+        harga,
+        size,
+        description,
+        kapasitas,
+        fasilitas,
+        Class,
+        file
+      );
+      if (result.error) {
+        alert("gagal menambahkan kamar");
+      } else {
+        navigate("/Home-Admin", {replace: true});
+      }
   };
+  
 
   return (
     <div className="bg-[#cecece] pt-5">
@@ -58,9 +74,9 @@ function TambahKamar() {
               <input
                 type="text"
                 id="kamar"
-                name="nama"
+                name="nameKamar"
                 className="block w-full px-3 py-2 mt-2 text-gray-700 bg-gray-300 border border-gray-400 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
-                value={roomData.nama}
+                value={roomData.nameKamar}
                 onChange={handleChange}
               />
             </div>
@@ -114,8 +130,8 @@ function TambahKamar() {
               <select
                 type="text"
                 id="tipe"
-                name="tipe"
-                value={roomData.tipe}
+                name="Class"
+                value={roomData.Class}
                 onChange={handleChange}
                 className="block w-full px-3 py-2 mt-2 text-gray-700 bg-gray-300 border border-gray-400 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
               >
@@ -131,9 +147,9 @@ function TambahKamar() {
               <textarea
                 type="textarea"
                 id="deskripsi"
-                name="deskripsi"
+                name="description"
                 className="block w-full px-3 py-2 mt-2 text-gray-700 bg-gray-300 border border-gray-400 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
-                value={roomData.deskripsi}
+                value={roomData.description}
                 onChange={handleChange}
               ></textarea>
             </div>

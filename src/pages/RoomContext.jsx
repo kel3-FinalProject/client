@@ -1,10 +1,11 @@
-import { createContext, useState } from 'react';
-import { roomData } from '../components/Data';
+// RoomContext.js
+import React, { createContext, useState, useEffect } from 'react';
+import { getKamar } from '../utils/network';
 
 export const RoomContext = createContext();
 
 const RoomProvider = ({ children }) => {
-  const [rooms, setRooms] = useState(roomData);
+  const [rooms, setRooms] = useState(null);
   const [type, setType] = useState('Type');
 
   const handleDelete = (roomId) => {
@@ -14,19 +15,33 @@ const RoomProvider = ({ children }) => {
     });
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await getKamar();
+      if (!response.error && Array.isArray(response.data)) {
+        setRooms(response.data);
+      } else {
+        console.error("Invalid response data structure:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };  
+
   const handleClick = (e) => {
     e.preventDefault();
     console.log(type);
 
-    const newRooms = roomData.filter((room) => {
-      return type === 'Type' || type === room.type;
-    });
+    // Jika type adalah 'Type', kembalikan semua kamar
+    const newRooms = type === 'Type' ? rooms : rooms.filter((room) => type === room.type);
 
     setRooms(newRooms);
   };
 
+  const contextValue = { rooms, type, setType, handleClick, handleDelete, fetchData };
+
   return (
-    <RoomContext.Provider value={{ rooms, type, setType, handleClick, handleDelete }}>
+    <RoomContext.Provider value={contextValue}>
       {children}
     </RoomContext.Provider>
   );
