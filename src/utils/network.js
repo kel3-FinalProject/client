@@ -106,9 +106,10 @@ async function getKamar() {
   const responseJson = await response.json();
   const formattedData = responseJson.data.map((element) => {
     element.image = `${BASE_URL}/images/${element.image}`;
+    console.log("Image URL:", `${element.image}`);
     return element;
   });
-  
+
   if (response.status >= 400) {
     return { error: true, code: response.status, data: null };
   }
@@ -116,15 +117,41 @@ async function getKamar() {
 }
 
 async function getKamarById(id) {
-  const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`);
-  const responseJson = await response.json();
+  try {
+    const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`);
+    const responseData = await response.json();
+    console.log("Response Data:", responseData);
+    if (!response.ok) {
+      console.error(`Error fetching room data for ID ${id}. Response:`, responseData);
+      return { error: true, code: response.status, data: null };
+    }
+    if (responseData.data) {
+      const { id, nameKamar, harga, description, fasilitas_array, urlImage } = responseData.data;
+      console.log("Fasilitas Array Before:", fasilitas_array);
 
-  if (response.status >= 400) {
-    return { error: true, code: response.status, data: null };
+      // Memastikan fasilitas_array berupa array
+      const formattedData = {
+        id,
+        nameKamar,
+        harga,
+        description,
+        fasilitas_array: Array.isArray(fasilitas_array) ? fasilitas_array : [],
+        urlImage: `${urlImage}`, // Sesuaikan ini dengan struktur direktori dan nama file gambar
+      };
+
+      console.log("Fasilitas Array After:", formattedData.fasilitas_array);
+
+      return { error: false, code: response.status, data: formattedData };
+    } else {
+      console.error(`Error fetching room data for ID ${id}. Invalid response:`, responseData);
+      return { error: true, code: response.status, data: null };
+    }
+  } catch (error) {
+    console.error(`Error fetching room data for ID ${id}. Internal error:`, error);
+    return { error: true, code: 500, data: null };
   }
-
-  return { error: false, code: response.status, data: responseJson.data };
 }
+
 
 async function updateKamar(id, harga, description, kapasitas, Class, file) {
   const formData = new FormData();
