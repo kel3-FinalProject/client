@@ -84,7 +84,6 @@ function EditKamar() {
     } catch (error) {
       console.error("Unexpected error:", error);
     }
-  };
 
   return (
     <div className="bg-[#cecece] pt-5">
@@ -105,7 +104,7 @@ function EditKamar() {
                 onChange={handleChange}
                 />
             </div>
-
+  
             <div>
               <label htmlFor="harga" className="text-white">
                 Harga

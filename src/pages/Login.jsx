@@ -7,8 +7,8 @@ import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   function handleEmail(event) {
     setEmail(event.target.value);
