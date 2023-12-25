@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Logo from "../assets/img/logo/logo_hotel.png";
-import { Link, useLocation, useNavigate} from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [header, setHeader] = useState(false);
@@ -22,7 +22,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/Login"); 
+    navigate("/Login");
   };
 
   return (
@@ -52,8 +52,11 @@ const Header = () => {
               >
                 Reservasi
               </Link>
-              <button onClick={handleLogout} className="hover:text-teal-700 transition font-[14px] uppercase">
-                LogOut
+              <button
+                onClick={handleLogout}
+                className="hover:text-teal-700 transition font-[14px] uppercase"
+              >
+                LOGOUT
               </button>
             </>
           ) : (
@@ -67,8 +70,11 @@ const Header = () => {
               <Link to="/Reservasi" className="hover:text-teal-700 transition">
                 Reservasi
               </Link>
-              <button onClick={handleLogout} className="hover:text-teal-700 transition">
-                LogOut
+              <button
+                onClick={handleLogout}
+                className="hover:text-teal-700 transition"
+              >
+                LOGOUT
               </button>
             </>
           )}

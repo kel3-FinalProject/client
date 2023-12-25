@@ -1,5 +1,5 @@
-import { createContext, useState} from 'react';
-import { getKamar, deleteKamar } from '../utils/network';
+import { createContext, useState } from "react";
+import { getKamar } from "../utils/network";
 
 export const RoomContext = createContext();
 
@@ -17,21 +17,9 @@ const RoomProvider = ({ children }) => {
       console.error("Error fetching data:", error);
     }
   };
-
-  const deleteRoom = async (roomId) => {
-    try {
-      await deleteKamar(roomId);
-      console.log("Berhasil menghapus data dengan id:", roomId)
-    } catch (error) {
-      console.error("Error deleting room:", error);
-    }
-  };
-
-  const contextValue = { rooms, fetchData, deleteRoom };
+  const contextValue = { rooms, fetchData };
   return (
-    <RoomContext.Provider value={contextValue}>
-      {children}
-    </RoomContext.Provider>
+    <RoomContext.Provider value={contextValue}>{children}</RoomContext.Provider>
   );
 };
 
