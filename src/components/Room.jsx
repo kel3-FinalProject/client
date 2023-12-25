@@ -15,7 +15,7 @@ const Room = ({ room }) => {
       console.log("Respon API:", data);
 
       if (!error && data !== null) {
-        console.log("Detail kamar:", data);
+        // console.log("Detail kamar:", data);
         console.log("Navigasi ke /room/", id);
         navigate(`/room/${id}`);
       } else {

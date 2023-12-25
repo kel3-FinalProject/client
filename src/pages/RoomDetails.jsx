@@ -1,6 +1,6 @@
 // RoomDetails.js
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaCheck } from 'react-icons/fa';
 import CheckIn from '../components/CheckIn';
 import CheckOut from '../components/CheckOut';
@@ -9,7 +9,8 @@ import Footer from '../components/Footer';
 import { getKamarById } from '../utils/network'; // Import fungsi getKamarById
 
 const RoomDetails = () => {
-  const [kamarById, setKamarById] = useState(null);
+  const navigate = useNavigate();
+  const [kamarById, setKamarById] = useState([]);
   const { id } = useParams();
 
   const fetchDataAsync = async () => {
@@ -21,6 +22,8 @@ const RoomDetails = () => {
         } else {
           console.error(`Error fetching room data for ID ${id}`);
           // Tambahkan return agar komponen tidak terus di-render
+          alert(`data dengan id ${id} tidak di temukan`);
+          navigate("/Rooms");
           return;
         }
       } catch (error) {
@@ -36,7 +39,7 @@ const RoomDetails = () => {
   }, [id, setKamarById]);
 
   if (!kamarById) {
-    return <div>Data kamar tidak lengkap atau kosong.</div>;
+    return <div>Loaading...</div>;
   }
 
   const { nameKamar, description, fasilitas_array, harga, Class, urlImage } = kamarById;
@@ -64,20 +67,20 @@ const RoomDetails = () => {
                 <h3 className="text-[30px] mb-3">Fasilitas Kamar</h3>
                 <p className="mb-12">Beberapa kenyamanan dan pelayanan yang ditawarkan jika Anda memilih kamar ini:</p>
                 <div className="grid grid-cols-3 gap-6 mb-12">
-          {Array.isArray(fasilitas_array) && fasilitas_array.length > 0 ? (
-            fasilitas_array.map((fasilitasItem, index) => (
-              <div className="flex items-center gap-x-3 flex-1" key={index}>
-                <div className="text-3xl text-yellow-600">
+                  {Array.isArray(fasilitas_array) && fasilitas_array.length > 0 ? (
+                  fasilitas_array.map((fasilitasItem, index) => (
+                  <div className="flex items-center gap-x-3 flex-1" key={index}>
+                  <div className="text-3xl text-yellow-600">
                   <FaCheck />
-                </div>
+                  </div>
                 <div className="">{fasilitasItem}</div>
               </div>
-            ))
-          ) : (
-            <div>Data fasilitas tidak valid.</div>
-          )}
-        </div>
-      </div>
+              ))
+             ) : (
+              <div>Data fasilitas tidak valid.</div>
+             )}
+              </div>
+            </div>
             </div>
 
             <div className="w-full h-full lg:w-[40%]">

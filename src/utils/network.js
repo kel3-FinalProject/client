@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:4003";
+const BASE_URL = "http://103.127.97.117:4003";
 
 function getAccessToken() {
   return localStorage.getItem("accessToken");
@@ -128,19 +128,16 @@ async function getKamarById(id) {
     if (responseData.data) {
       const { id, nameKamar, harga, description, fasilitas_array, urlImage } = responseData.data;
       console.log("Fasilitas Array Before:", fasilitas_array);
-
-      // Memastikan fasilitas_array berupa array
       const formattedData = {
         id,
         nameKamar,
         harga,
         description,
-        fasilitas_array: Array.isArray(fasilitas_array) ? fasilitas_array : [],
-        urlImage: `${urlImage}`, // Sesuaikan ini dengan struktur direktori dan nama file gambar
+        fasilitas_array,
+        urlImage
       };
-
+      console.log(urlImage);
       console.log("Fasilitas Array After:", formattedData.fasilitas_array);
-
       return { error: false, code: response.status, data: formattedData };
     } else {
       console.error(`Error fetching room data for ID ${id}. Invalid response:`, responseData);
@@ -151,7 +148,6 @@ async function getKamarById(id) {
     return { error: true, code: 500, data: null };
   }
 }
-
 
 async function updateKamar(id, harga, description, kapasitas, Class, file) {
   const formData = new FormData();

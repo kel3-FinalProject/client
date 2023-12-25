@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { addKamar } from "../utils/network";
 
@@ -57,7 +57,6 @@ function TambahKamar() {
         navigate("/Home-Admin", {replace: true});
       }
   };
-  
 
   return (
     <div className="bg-[#cecece] pt-5">
