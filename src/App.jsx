@@ -8,6 +8,7 @@ import Reservasi from "./components/Reservasi";
 import Receipe from "./components/ReceipeBooking";
 import HomeAdmin from "./pages/HomeAdmin";
 import AddKamar from "./components/AddKamar";
+import EditKamar from "./components/EditKamar";
 import { getAccessToken } from "./utils/network";
 
 function AuthLogin() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/Home-Admin" element={<HomeAdmin />} />
           <Route path="/Add-Kamar" element={<AddKamar />} />
+          <Route path="/Edit-Kamar/:id" element={<EditKamar />} />
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/Reservasi" element={<Reservasi />} />

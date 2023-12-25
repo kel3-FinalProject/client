@@ -1,31 +1,39 @@
-import React from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { BsArrowsFullscreen, BsPeople } from "react-icons/bs";
 
-const Room = ({ room }) => {
+const Room = ({ room, onDelete }) => {
   const location = useLocation();
   const isHomeAdmin = location.pathname === "/Home-Admin";
   const {
     id,
-    nameKamar, 
-    image,
+    nameKamar,
+    description,
+    image: urlImage,
     size,
     kapasitas,
-    description,
-    fasilitas,
-    Class,
   } = room;
 
-  const handleDelete = () => {
-    // Tambahkan logika untuk menghapus kamar
-  };
+   const [isDeleted, setIsDeleted] = useState(false);
+   const handleDelete = async () => {
+     try {
+       await onDelete(id);
+       setIsDeleted(true);
+     } catch (error) {
+       console.error("Error deleting room:", error);
+     }
+   };
+ 
+   if (isDeleted) {
+     return null;
+   }
 
   return (
     <div className="bg-white drop-shadow-xl min-h-[500px] group">
-      <div className="overflow-hidden">
+      <div className="overflow-hidden h-[300px]"> 
         <img
-          className="group-hover:scale-110 transition-all duration-300 w-full"
-          src={image}
+          className="group-hover:scale-110 transition-all duration-300 w-full h-full object-cover"
+          src={urlImage}
           alt={nameKamar}
         />
       </div>
@@ -69,7 +77,7 @@ const Room = ({ room }) => {
             Delete
           </button>
           <Link
-            to="/Add-Kamar"
+            to={`/Edit-Kamar/${id}`}
             className="bg-emerald-300 hover:bg-emerald-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
           >
             Edit

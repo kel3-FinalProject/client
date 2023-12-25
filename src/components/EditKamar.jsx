@@ -1,14 +1,57 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { addKamar } from "../utils/network";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getKamarById, updateKamar } from "../utils/network";
 
-function TambahKamar() {
+function EditKamar() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [roomData, setRoomData] = useState({
+    nameKamar: "",
+    harga: "",
+    size: "",
+    kapasitas: "",
+    Class: "",
+    description: "",
+    fasilitas: "",
+  });
+
+  useEffect(() => {
+    const fetchKamarData = async () => {
+      try {
+        const result = await getKamarById(id);
+  
+        if (result && !result.error) {
+  
+          if (result) {
+            setPreview(result.urlImage);
+            setRoomData({
+              nameKamar: result.nameKamar || "",
+              harga: result.harga || "",
+              size: result.size || "",
+              kapasitas: result.kapasitas || "",
+              Class: result.Class || "",
+              description: result.description || "",
+              fasilitas: result.fasilitas || "",
+            });
+          } else {
+            console.error("Data tidak valid");
+          }
+        } else {
+          console.error("Error dalam mendapatkan data:", result?.error?.message || "Response tidak valid");
+        }
+      } catch (error) {
+        console.error("Error tak terduga:", error);
+      }
+    };
+  
+    fetchKamarData();
+  }, [id]);
+
   const goBack = () => {
     navigate("/Home-Admin", { replace: true });
   };
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState("");
 
   const handleFileChange = (e) => {
     if (e.target.files) {
@@ -18,50 +61,35 @@ function TambahKamar() {
     }
   };
 
-  const [roomData, setRoomData] = useState({
-    nameKamar: "",
-    harga: "",
-    size: "",
-    kapasitas: "",
-    Class: "VIP",
-    description: "",
-    fasilitas: "",
-  });
-
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setRoomData({
-      ...roomData,
+    setRoomData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { nameKamar, harga, size, description, kapasitas, fasilitas, Class } = roomData;
-      const result = await addKamar(
-        nameKamar,
-        harga,
-        size,
-        description,
-        kapasitas,
-        fasilitas,
-        Class,
-        file
-      );
-      if (result.error) {
-        alert("gagal menambahkan kamar");
+    try {
+      const { harga, nameKamar, size, description, kapasitas} = roomData; 
+      const result = await updateKamar(id, nameKamar, harga, size, description, kapasitas, roomData.Class, file, roomData.fasilitas);
+  
+      if (!result.error) {
+        console.log("Data updated successfully");
+        navigate("/Home-Admin", { replace: true });
       } else {
-        navigate("/Home-Admin", {replace: true});
+        console.error("Error updating data:", result.code, result.data);
       }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
   };
 
   return (
     <div className="bg-[#cecece] pt-5">
       <div className="bg-[#638ecb] max-w-4xl p-6 mx-auto rounded-md shadow-2xl">
-        <h1 className="text-2xl font-bold text-white capitalize">
-          Tambah Kamar
-        </h1>
+        <h1 className="text-2xl font-bold text-white capitalize">Edit Kamar</h1>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
@@ -75,7 +103,7 @@ function TambahKamar() {
                 className="block w-full px-3 py-2 mt-2 text-gray-700 bg-gray-300 border border-gray-400 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
                 value={roomData.nameKamar}
                 onChange={handleChange}
-              />
+                />
             </div>
 
             <div>
@@ -121,12 +149,12 @@ function TambahKamar() {
             </div>
 
             <div>
-              <label htmlFor="tipe" className="text-white">
+              <label htmlFor="Class" className="text-white">
                 Type / Class Kamar
               </label>
               <select
                 type="text"
-                id="tipe"
+                id="Class"
                 name="Class"
                 value={roomData.Class}
                 onChange={handleChange}
@@ -231,4 +259,4 @@ function TambahKamar() {
   );
 }
 
-export default TambahKamar;
+export default EditKamar;
