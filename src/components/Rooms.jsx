@@ -1,29 +1,8 @@
-// Rooms.jsx
-import { useContext, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { RoomContext } from '../pages/RoomContext';
-import Room from '../components/Room';
-import { IoChevronBack } from 'react-icons/io5';
+import { Link } from "react-router-dom";
+import Room from "../components/Room";
+import { IoChevronBack } from "react-icons/io5";
 
-const Rooms = () => {
-  const { rooms, fetchData, deleteRoom } = useContext(RoomContext);
-  const fetchRoomsData = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    fetchRoomsData();
-  }, [fetchRoomsData]);
-
-  const handleDelete = async (roomId) => {
-    try {
-      await deleteRoom(roomId);
-      fetchRoomsData();
-    } catch (error) {
-      console.error("Error deleting room:", error);
-    }
-  };
-
+const Rooms = ({ rooms }) => {
   if (!rooms) {
     return <div>Loading...</div>;
   }
@@ -39,7 +18,7 @@ const Rooms = () => {
         </div>
         <div className="grid grid-cols-1 max-w-sm mx-auto gap-[30px] lg:grid-cols-3 lg:max-w-none lg:mx-0">
           {rooms.map((room) => (
-            <Room room={room} key={room.id} onDelete={() => handleDelete(room.id)} />
+            <Room room={room} key={room.id} />
           ))}
         </div>
       </div>
