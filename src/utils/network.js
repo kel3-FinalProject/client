@@ -1,4 +1,4 @@
-const BASE_URL = "http://103.127.97.117:4003";
+const BASE_URL = "http://localhost:4003";
 
 function getAccessToken() {
   return localStorage.getItem("accessToken");
@@ -104,44 +104,73 @@ async function addKamar(
 async function getKamar() {
   const response = await fetchWithToken(`${BASE_URL}/kamar`);
   const responseJson = await response.json();
-
+  const formattedData = responseJson.data.map((element) => {
+    element.image = `${BASE_URL}/images/${element.image}`;
+    return element;
+  });
+  
   if (response.status >= 400) {
     return { error: true, code: response.status, data: null };
   }
-  return { error: false, code: response.status, data: responseJson.data };
+  return { error: false, code: response.status, data: formattedData };
 }
 
 async function getKamarById(id) {
-  const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`);
-  const responseJson = await response.json();
+  try {
+    const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`);
+    
+    if (response.status === 404) {
+      console.error("Data not found:", response.status);
+      return { error: true, code: response.status, data: null };
+    }
 
-  if (response.status >= 400) {
-    return { error: true, code: response.status, data: null };
+    if (!response.ok) {
+      console.error("Error fetching kamar data:", response.status);
+      return { error: true, code: response.status, data: null };
+    }
+
+    const responseJson = await response.json();
+    console.log("Response from server:", responseJson);
+    return responseJson;
+  } catch (error) {
+    console.error("Unexpected error during getKamarById:", error);
+    return { error: true, code: 500, data: null };
   }
-
-  return { error: false, code: response.status, data: responseJson.data };
 }
 
-async function updateKamar(id, harga, description, kapasitas, Class, file) {
-  const formData = new FormData();
-  formData.append("harga", harga);
-  formData.append("description", description);
-  formData.append("kapasitas", kapasitas);
-  formData.append("Class", Class);
-  formData.append("file", file);
+async function updateKamar(id, nameKamar, harga, size, description, kapasitas, Class, file, fasilitas) {
+  try {
+    const formData = new FormData();
+    formData.append("nameKamar", nameKamar);
+    formData.append("harga", harga);
+    formData.append("description", description);
+    formData.append("size", size);
+    formData.append("Class", Class); 
+    formData.append("kapasitas", kapasitas);
+    formData.append("tipe", Class); 
+    formData.append("fasilitas", fasilitas);
 
-  const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`, formData, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    body: formData,
-  });
-  const responseJson = await response.json();
-  if (response.status >= 400) {
-    return { error: true, code: response.status, data: null };
+    if (file) {
+      formData.append("file", file);
+    }
+
+    const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    const responseJson = await response.json();
+
+    if (response.status >= 400) {
+      console.error("Error updating kamar:", response.status, responseJson);
+      return { error: true, code: response.status, data: null };
+    }
+
+    return { error: false, code: response.status, data: responseJson.data };
+  } catch (error) {
+    console.error("Kesalahan yang tidak terduga selama updateKamar:", error);
+    return { error: true, code: 500, data: null };
   }
-  return { error: false, code: response.status, data: responseJson.data };
 }
 
 async function deleteKamar(id) {

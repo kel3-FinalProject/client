@@ -39,7 +39,7 @@ function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/Home-Admin" element={<HomeAdmin />} />
           <Route path="/Add-Kamar" element={<AddKamar />} />
-          <Route path="/Edit-Kamar" element={<EditKamar />} />
+          <Route path="/Edit-Kamar/:id" element={<EditKamar />} />
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/Reservasi" element={<Reservasi />} />
