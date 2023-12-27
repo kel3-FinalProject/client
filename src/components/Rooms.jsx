@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import Room from "../components/Room";
 import { IoChevronBack } from "react-icons/io5";
@@ -7,7 +6,6 @@ const Rooms = ({ rooms }) => {
   const location = useLocation();
   const isOnAdminPage = location.pathname.startsWith("/Home-Admin");
 
-const Rooms = ({ rooms }) => {
   if (!rooms) {
     return <div>Loading...</div>;
   }
@@ -24,7 +22,6 @@ const Rooms = ({ rooms }) => {
         <div className="grid grid-cols-1 max-w-sm mx-auto gap-[30px] lg:grid-cols-3 lg:max-w-none lg:mx-0">
           {rooms.map((room) => (
             <Room key={room.id} room={room} />
-
           ))}
         </div>
       </div>
@@ -33,3 +30,4 @@ const Rooms = ({ rooms }) => {
 };
 
 export default Rooms;
+
