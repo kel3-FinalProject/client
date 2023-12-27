@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getOrderStatus } from "../lib/helpers";
 import { IoSearch, IoChevronBack } from "react-icons/io5";
 import { FaTimes } from "react-icons/fa";
-import { getReservasi, bayarReservasi } from "../utils/network";
+import { getReservasi } from "../utils/network";
 
 const Reservasi = () => {
 
