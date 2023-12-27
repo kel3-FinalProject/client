@@ -42,7 +42,7 @@ const Room = ({ room }) => {
 
             <div className="flex gap-x-1">
               <div>Max People</div>
-              <div>{maxPerson}</div>
+              <div>{kapasitas}</div>
             </div>
           </div>
         </div>
@@ -53,7 +53,6 @@ const Room = ({ room }) => {
           {description.slice(0, 56)}
         </p>
       </div>
-
       <div className="flex justify-center items-center space-x-4 max-w-[240px] mx-auto">
         {isAdminPage ? (
           <>
@@ -83,3 +82,4 @@ const Room = ({ room }) => {
 };
 
 export default Room;
+
