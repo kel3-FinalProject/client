@@ -1,42 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Link, useLocation } from "react-router-dom";
 import { getOrderStatus } from "../lib/helpers";
 import { IoSearch, IoChevronBack } from "react-icons/io5";
 import { FaTimes } from "react-icons/fa";
 
-const initialReservasiData = [
-  {
-    id: "1",
-    room_id: "2",
-    type: "VIP",
-    kapasitas: "4",
-    user_name: "Agung Setia",
-    checkIn: "2022-05-17T03:24:00",
-    checkOut: "2022-05-17T03:24:00",
-    total: "Rp 100.000",
-    current_order_status: "Pending",
-  },
-  {
-    id: "2",
-    room_id: "1",
-    type: "VIP",
-    user_name: "Ryan Wahyudi",
-    checkIn: "2022-05-14T05:24:00",
-    checkOut: "2022-05-14T05:24:00",
-    total: "Rp 300.000",
-    current_order_status: "Booked",
-  },
-];
-
 const Reservasi = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [recentReservasiData, setRecentReservasiData] =
-    useState(initialReservasiData);
+  const [recentReservasiData, setRecentReservasiData] = useState([]);
+  const [originalReservasiData, setOriginalReservasiData] = useState([]);
 
   const handleSearch = () => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    const filteredData = initialReservasiData.filter(
+    const filteredData = originalReservasiData.filter(
       (reservasi) =>
         reservasi.user_name.toLowerCase().includes(lowerCaseSearchTerm) ||
         reservasi.current_order_status
@@ -48,11 +24,31 @@ const Reservasi = () => {
 
   const handleClearSearch = () => {
     setSearchTerm("");
-    setRecentReservasiData(initialReservasiData);
+    setRecentReservasiData(originalReservasiData);
   };
 
   const location = useLocation();
   const isReservasiAdmin = location.pathname === "/Reservasi-Admin";
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/Receipe');
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setRecentReservasiData(data);
+        setOriginalReservasiData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -107,7 +103,7 @@ const Reservasi = () => {
                 {recentReservasiData.map((reservasi) => (
                   <tr key={reservasi.id}>
                     <td>
-                      <Link to={`/reservasi/${reservasi.id}`}>
+                      <Link to={`/Reservasi/${reservasi.id}`}>
                         {reservasi.id}
                       </Link>
                     </td>
@@ -117,7 +113,7 @@ const Reservasi = () => {
                       </Link>
                     </td>
                     <td>
-                      <Link to={`/room/${reservasi.type}`}>
+                      <Link to={`/room/${reservasi.Class}`}>
                         {reservasi.type}
                       </Link>
                     </td>
@@ -178,10 +174,6 @@ const Reservasi = () => {
               >
                 Cari
               </button>
-              {/* <select className="ml-2 p-1 border border-gray-500">
-              <option value="Pending">Pending</option>
-              <option value="Booked">Booked</option>
-            </select> */}
             </div>
             <table className="w-full mt-10 text-gray-700 table-auto">
               <thead>

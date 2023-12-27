@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Logo from "../assets/img/logo/logo_hotel.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import {logoutAccessToken} from "../utils/network";
+
 
 const Header = () => {
   const [header, setHeader] = useState(false);
@@ -20,10 +22,10 @@ const Header = () => {
   const location = useLocation();
   const isHomeAdmin = location.pathname === "/Home-Admin";
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+    function handleLogout() {
+    logoutAccessToken();
     navigate("/Login");
-  };
+  }
 
   return (
     <header

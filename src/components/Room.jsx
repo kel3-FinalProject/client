@@ -4,13 +4,14 @@ import { deleteKamar } from "../utils/network";
 
 const Room = ({ room }) => {
   const location = useLocation();
-  const isHomeAdmin = location.pathname === "/Home-Admin";
-  const { id, name, image, size, maxPerson, description } = room;
+  const { id, name, image, size, kapasitas, description } = room;
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     const deleted = await deleteKamar(id);
     return deleted;
   };
+
+  const isAdminPage = location.pathname.includes("Home-Admin");
 
   return (
     <div className="bg-white drop-shadow-xl min-h-[500px] group">
@@ -30,7 +31,7 @@ const Room = ({ room }) => {
 
             <div className="flex gap-x-1 ">
               <div>size</div>
-              <div>{size}m2</div>
+              <div>{size}M2</div>
             </div>
           </div>
 
@@ -52,30 +53,31 @@ const Room = ({ room }) => {
           {description.slice(0, 56)}
         </p>
       </div>
-      {isHomeAdmin ? (
-        <div className="flex justify-center items-center space-x-4 max-w-[240px] mx-auto">
-          <button
-            onClick={() => handleDelete(id)}
-            className="bg-red-300 hover:bg-red-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
-          >
-            Delete
-          </button>
-          <Link
-            to={"/Edit-Kamar"}
-            className="bg-emerald-300 hover:bg-emerald-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
-          >
-            Edit
-          </Link>
-        </div>
-      ) : (
-        <div className="flex justify-center items-center space-x-4 max-w-[240px] mx-auto">
-          <Link to={`/room/${id}`}>
-            <button className="bg-blue-300 hover:bg-blue-500 font-bold py-2 px-2 rounded text-black flex justify-center items-center ">
-              Detail dan Booking
+
+      <div className="flex justify-center items-center space-x-4 max-w-[240px] mx-auto">
+        {isAdminPage ? (
+          <>
+            <button
+              onClick={handleDelete}
+              className="bg-red-300 hover:bg-red-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
+            >
+              Delete
             </button>
+            <Link
+              to={`/Edit-Kamar/${id}`}
+              className="bg-emerald-300 hover:bg-emerald-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
+            >
+              Edit
+            </Link>
+          </>
+        ) : (
+            <Link to={`/room/${id}`}
+            className="bg-emerald-300 hover:bg-emerald-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[240px]"
+          >
+            Detail Kamar
           </Link>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

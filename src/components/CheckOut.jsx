@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BsCalendar } from 'react-icons/bs';
 
-const CheckOut = () => {
-  const [endDate, setEndDate] = useState(false);
+const CheckOut = ({endDate, setEndDate}) => {
 
   return (
     <div className='relative flex items-center justify-center h-full bg-white'>

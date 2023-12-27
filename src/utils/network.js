@@ -196,6 +196,12 @@ async function deleteKamar(id) {
   return { error: false, code: response.status, data: responseJson.data };
 }
 
+function logoutAccessToken() {
+  return localStorage.removeItem("accessToken");
+}
+
+
+
 export {
   getAccessToken,
   putAccessToken,
@@ -207,4 +213,5 @@ export {
   getKamarById,
   updateKamar,
   deleteKamar,
+  logoutAccessToken
 };

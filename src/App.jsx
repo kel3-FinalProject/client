@@ -44,7 +44,7 @@ function App() {
           <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/Reservasi" element={<Reservasi />} />
           <Route path="/Reservasi-Admin" element={<Reservasi />} />
-          <Route path="/Receipe" element={<Receipe />} />
+          <Route path="/Receipe/:id" element={<Receipe />} />
         </Route>
       </Routes>
     </div>
