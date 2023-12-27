@@ -23,23 +23,33 @@ async function fetchWithToken(url, options = {}) {
 }
 
 async function login({ email, password }) {
-  const response = await fetch(`${BASE_URL}/Login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/Login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const responseJson = await response.json();
+    const responseJson = await response.json();
 
-  if (response.status >= 400) {
-    alert(responseJson.msg);
-    return { error: true, code: response.status, data: null };
+    if (response.status >= 400) {
+      alert(responseJson.msg);
+      return { error: true, code: response.status, data: null };
+    }
+
+    const { token, name } = responseJson;
+
+    // Simpan token dan ID ke dalam localStorage
+    putAccessToken(token);
+    localStorage.setItem("name", name);
+
+    return { error: false, code: response.status, data: responseJson.data };
+  } catch (error) {
+    console.error(`Unexpected error during login: ${error.message || error}`);
+    return { error: true, code: 500, data: null };
   }
-
-  putAccessToken(responseJson?.token);
-  return { error: false, code: response.status, data: responseJson.data };
 }
 
 async function register({ name, email, password, confirmPassword }) {
@@ -60,6 +70,29 @@ async function register({ name, email, password, confirmPassword }) {
 
   return { error: false, code: response.status };
 }
+
+function logoutAccessToken() {
+  return localStorage.removeItem("accessToken");
+}
+
+async function getUserById(userId) {
+  try {
+    const response = await fetchWithToken(`${BASE_URL}/Users/${userId}`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { error: false, code: response.status, data };
+  } catch (error) {
+    console.error(`Error getting user by ID (${userId}):`, error);
+    return { error: true, code: 500, data: null };
+  }
+}
+
 
 async function addKamar(
   nameKamar,
@@ -196,11 +229,88 @@ async function deleteKamar(id) {
   return { error: false, code: response.status, data: responseJson.data };
 }
 
-function logoutAccessToken() {
-  return localStorage.removeItem("accessToken");
+async function getReservasi() {
+  try {
+    const response = await fetchWithToken(`${BASE_URL}/Reservasi`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { error: false, code: response.status, data };
+  } catch (error) {
+    console.error('Error fetching reservasi data:', error);
+    return { error: true, code: 500, data: null };
+  }
 }
 
+async function getReservasiById(id) {
+  try {
+    const response = await fetchWithToken(`${BASE_URL}/api/Reservasi/${id}`);
+    
+    if (response.status === 404) {
+      console.error("Reservasi not found:", response.status);
+      return { error: true, code: response.status, data: null };
+    }
 
+    if (!response.ok) {
+      console.error("Error fetching reservasi data:", response.status);
+      return { error: true, code: response.status, data: null };
+    }
+
+    const data = await response.json();
+    return { error: false, code: response.status, data };
+  } catch (error) {
+    console.error("Unexpected error during getReservasiById:", error);
+    return { error: true, code: 500, data: null };
+  }
+}
+
+// Modifikasi fungsi createReservasi pada client
+async function createReservasi({ tanggal_checkin, tanggal_checkout, kamarId }) {
+  try {
+    // Dapatkan nama pengguna dari local storage
+    const userName = localStorage.getItem("name");
+    // Lanjutkan dengan membuat reservasi
+    const response = await fetchWithToken(`${BASE_URL}/Reservasi`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tanggal_checkin, tanggal_checkout, kamarId, userName }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return { error: false, code: response.status, data };
+  } catch (error) {
+    console.error('Error creating reservasi:', error);
+    return { error: true, code: 500, data: null };
+  }
+}
+
+async function bayarReservasi(id) {
+  try {
+    const response = await fetchWithToken(`${BASE_URL}/Reservasi/${id}`, {
+      method: "PUT",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { error: false, code: response.status, data };
+  } catch (error) {
+    console.error('Error processing pembayaran:', error);
+    return { error: true, code: 500, data: null };
+  }
+}
 
 export {
   getAccessToken,
@@ -208,10 +318,15 @@ export {
   deleteAccesToken,
   login,
   register,
+  getUserById,
   addKamar,
   getKamar,
   getKamarById,
   updateKamar,
   deleteKamar,
+  getReservasi,
+  getReservasiById,
+  createReservasi,
+  bayarReservasi,
   logoutAccessToken
 };

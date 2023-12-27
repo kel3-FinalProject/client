@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 import { MdCheck, MdClear } from "react-icons/md";
@@ -6,25 +6,23 @@ import CheckIn from "../components/CheckIn";
 import CheckOut from "../components/CheckOut";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { getKamarById } from "../utils/network";
-
-
+import { getKamarById, createReservasi } from "../utils/network";
 
 const RoomDetails = () => {
   const navigation = useNavigate();
-
-  const [kamarById, setKamarById] = useState(null);
   const { id } = useParams();
 
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [namaPelanggan, setNamaPelanggan] = useState('');
+  const [kamarById, setKamarById] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  const fetchDataAsync = async () => {
-    if (id) {
+  useEffect(() => {
+    const fetchDataAsync = async () => {
       try {
         const response = await getKamarById(id);
+
         if (response && !response.error && response.data) {
+          console.log("Response data:", response.data);
           setKamarById(response.data);
         } else {
           console.error(`Error fetching room data for ID ${id}`);
@@ -34,12 +32,54 @@ const RoomDetails = () => {
       } catch (error) {
         console.error(`Error: ${error.message || error}`);
       }
-    }
-  };
+    };
 
-  useEffect(() => {
     fetchDataAsync();
   }, [id, setKamarById]);
+
+// ...
+const handleBookingNow = async () => {
+  try {
+    const checkinDate = new Date(startDate);
+    const checkoutDate = new Date(endDate);
+
+    // Menghitung selisih hari antara check-in dan check-out
+    const selisihHari = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+
+    // Mendapatkan harga kamar dari state atau kamarById
+    const hargaKamar = kamarById ? kamarById.harga : 0;
+
+    // Menghitung total harga berdasarkan harga kamar dan selisih hari
+    const totalHarga = hargaKamar * selisihHari;
+
+    const response = await createReservasi({
+      tanggal_checkin: checkinDate.toISOString(),
+      tanggal_checkout: checkoutDate.toISOString(),
+      kamarId: id,
+    });
+
+    if (!response.error) {
+      const reservationData = response.data;
+
+      navigation(`/Receipe/${id}`, {
+        state: {
+          idParam: reservationData.id,
+          startDateParam: startDate,
+          endDateParam: endDate,
+          tipeKamarParam: kamarById ? kamarById.Class : "",
+          nameKamarParam: kamarById ? kamarById.nameKamar : "",
+          hargaKamarParam: totalHarga,
+          namaPelangganParam: localStorage.getItem("name") || '',
+          userIdParam: reservationData?.userId || '',
+        },
+      });
+    } else {
+      console.error("Error creating reservation:", response.code, response.data);
+    }
+  } catch (error) {
+    console.error("Unexpected error during reservation:", error);
+  }
+};
 
   if (!kamarById) {
     return <div>Loading...</div>;
@@ -92,14 +132,8 @@ const RoomDetails = () => {
             <div className="w-full h-full lg:w-[40%]">
               <div className=" bg-blue-400">
                 <div className="py-4 px-6 mb-3">
-                  <div className="flex flex-col space-y-4 mb-4"></div>
                   <h3 className="text-black pb-4">Silahkan Booking</h3>
 
-                  <div className="h-[60px]">
-                    <div className='relative flex items-center justify-center h-full bg-white pt-1'>
-                      <input className='w-full h-full bg-white pr-5 pl-5 mr-10 ml-10 text-center'  style={{ borderWidth: 0 }} placeholder="Nama Pelanggan" onChange={(e) => setNamaPelanggan(e.target.value)} />
-                    </div>
-                  </div>
                   <div className="h-[60px]">
                     <CheckIn startDate={startDate} setStartDate={setStartDate} />
                   </div>
@@ -110,18 +144,9 @@ const RoomDetails = () => {
                     Tipe kamar: {Class}
                   </div>
                   <div>
-                    <button className="btn btn-lg bg-blue-300 w-full py-2 px-4 rounded mx-auto text-black"
-                      onClick={() => navigation(`/Receipe/${id}`, {
-                        state: {
-                          idParam: id,
-                          startDateParam: startDate,
-                          endDateParam: endDate,
-                          tipeKamarParam: Class,
-                          nameKamarParam: nameKamar,
-                          hargaKamarParam: harga,
-                          namaPelangganParam: namaPelanggan
-                        }
-                      })}
+                    <button
+                      className="btn btn-lg bg-blue-300 w-full py-2 px-4 rounded mx-auto text-black"
+                      onClick={handleBookingNow}
                     >
                       Booking sekarang
                     </button>
@@ -140,23 +165,24 @@ const RoomDetails = () => {
                     <MdCheck size="1.7em" className="text-blue-800" />
                     Check-in: 07.00-22.00
                   </li>
-
                   <li className="flex items-center gap-x-4 text-black">
                     <MdCheck size="1.7em" className="text-blue-800" />
                     Check-in: 22.00
                   </li>
-
                   <li className="flex items-center gap-x-4 text-black">
-                    <MdClear size="1.7em" className="text-red-500 " />
-                    Alkohol
+                    <MdClear size="1.7em" className="text-red-500 ">
+                      Alkohol
+                    </MdClear>
                   </li>
                   <li className="flex items-center gap-x-4 text-black">
-                    <MdClear size="1.7em" className="text-red-500 " />
-                    Merokok
+                    <MdClear size="1.7em" className="text-red-500 ">
+                      Merokok
+                    </MdClear>
                   </li>
                   <li className="flex items-center gap-x-4 text-black">
-                    <MdClear size="1.7em" className="text-red-500" />
-                    Hewan Peliharaan
+                    <MdClear size="1.7em" className="text-red-500">
+                      Hewan Peliharaan
+                    </MdClear>
                   </li>
                 </ul>
               </div>

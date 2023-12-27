@@ -6,7 +6,7 @@ const Room = ({ room }) => {
   const location = useLocation();
   const { id, name, image, size, kapasitas, description } = room;
 
-  const handleDelete = async () => {
+  const handleDelete = async (id) => {
     const deleted = await deleteKamar(id);
     return deleted;
   };
@@ -19,7 +19,7 @@ const Room = ({ room }) => {
         <img
           className="group-hover:scale-110 transition-all duration-300 w-full"
           src={image}
-          alt=""
+          alt={name}
         />
       </div>
       <div className="bg-white text-black drop-shadow-xl max-w-[320px] mx-auto h-[60px] -translate-y-1/2 flex justify-center items-center uppercase font-tertiary tracking-[1px] font-semibold text-base">
@@ -57,7 +57,7 @@ const Room = ({ room }) => {
         {isAdminPage ? (
           <>
             <button
-              onClick={handleDelete}
+              onClick={()=>handleDelete(id)}
               className="bg-red-300 hover:bg-red-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-[120px]"
             >
               Delete

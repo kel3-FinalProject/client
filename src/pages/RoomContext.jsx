@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { getKamar } from "../utils/network";
 
 export const RoomContext = createContext();
@@ -17,6 +17,11 @@ const RoomProvider = ({ children }) => {
       console.error("Error fetching data:", error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const contextValue = { rooms, fetchData };
   return (
     <RoomContext.Provider value={contextValue}>{children}</RoomContext.Provider>

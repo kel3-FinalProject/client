@@ -11,7 +11,7 @@ const Home = () => {
 
   const fetchRoomsData = useCallback(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   useEffect(() => {
     fetchRoomsData();

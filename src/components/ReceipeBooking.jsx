@@ -1,54 +1,41 @@
 import moment from 'moment';
 import { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
+import { bayarReservasi } from '../utils/network';
 
-const OrderReceipt = () => {
 
+const OrderReceipt = ({ roomDetails }) => {
   const dataParams = useLocation();
-  /* 2. Get the param */
+  const navigation = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [orderData, setOrderData] = useState({
     namePelanggan: '',
-    name: '',
     tanggal_checkin: '',
     tanggal_checkout: '',
     id: '',
-    id_kamar: '',
+    name: '',
     Class: '',
     total: 0,
   });
-
-  const { id } = useParams();
+  const [bayar, setBayar] = useState([]);
 
   useEffect(() => {
-    setOrderData({
-      namePelanggan: dataParams.state?.namaPelangganParam,
-      name: dataParams.state?.nameKamarParam,
+    console.log('Data Params saat ini:', dataParams);
+
+    const initialData = {
+      namePelanggan: dataParams.state?.namaPelangganParam || '', // Menggunakan data langsung dari state
+      name: dataParams.state?.nameKamarParam || '',
       tanggal_checkin: moment(dataParams.state?.startDateParam).format('DD MMMM YYYY'),
       tanggal_checkout: moment(dataParams.state?.endDateParam).format('DD MMMM YYYY'),
-      id: id,
-      id_kamar: dataParams.state?.idParam,
-      Class: dataParams.state?.tipeKamarParam,
-      total: dataParams.state?.hargaKamarParam
-    })
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/Receipe');
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setOrderData(data); // Set the fetched data to the state
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
+      id: dataParams.state?.idParam || '',
+      id_kamar: dataParams.state?.idParam || '',
+      Class: dataParams.state?.tipeKamarParam || '',
+      total: dataParams.state?.hargaKamarParam || 0,
     };
 
+    setOrderData(initialData);
+  }, [dataParams]);
 
-    fetchData();
-  }, []);
 
   const handleGoBack = () => {
     setShowConfirmation(true);
@@ -56,11 +43,28 @@ const OrderReceipt = () => {
 
   const handleConfirmation = (confirmed) => {
     setShowConfirmation(false);
-
     if (confirmed) {
       window.location.href = '/Reservasi';
     }
   };
+
+  const handlePembayaran = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await bayarReservasi(orderData.id);
+  
+      if (response && !response.error && response.data) {
+        console.log("Response data:", response.data);
+        setBayar(response.data);
+        navigation("/Home");
+      } else {
+        console.error(`Error fetching room data for ID ${id}`);
+      }
+    } catch (error) {
+      console.error(`Error: ${error.message || error}`);
+    }
+  };
+  
 
   return (
     <div className="bg-white p-8 shadow-md max-w-md mx-auto mt-8 text-black">
@@ -108,11 +112,10 @@ const OrderReceipt = () => {
         <p className="font-bold text-xl">Rp.{orderData.total}</p>
       </div>
 
-      <Link to={`/Home/`}>
-        <button className="bg-green-300 hover:bg-green-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-full">
+      
+        <button onClick={handlePembayaran} className="bg-green-300 hover:bg-green-500 font-bold py-2 px-4 rounded text-black flex justify-center items-center w-full">
           Pembayaran
         </button>
-      </Link>
 
       <button
         onClick={handleGoBack}

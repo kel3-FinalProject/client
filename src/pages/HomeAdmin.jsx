@@ -13,7 +13,7 @@ const HomeAdmin = () => {
 
   const fetchRoomsData = useCallback(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   useEffect(() => {
     fetchRoomsData();
