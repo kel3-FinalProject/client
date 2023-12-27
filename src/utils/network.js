@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:4003";
+const BASE_URL = "http://103.127.97.117:4003";
 
 function getAccessToken() {
   return localStorage.getItem("accessToken");
@@ -89,7 +89,7 @@ async function addKamar(
     body: formData,
   });
   try {
-  const responseJson = await response.json();
+    const responseJson = await response.json();
 
     if (response.status >= 400) {
       return { error: true, code: response.status, data: null };
@@ -108,7 +108,7 @@ async function getKamar() {
     element.image = `${BASE_URL}/images/${element.image}`;
     return element;
   });
-  
+
   if (response.status >= 400) {
     return { error: true, code: response.status, data: null };
   }
@@ -118,7 +118,7 @@ async function getKamar() {
 async function getKamarById(id) {
   try {
     const response = await fetchWithToken(`${BASE_URL}/kamar/${id}`);
-    
+
     if (response.status === 404) {
       console.error("Data not found:", response.status);
       return { error: true, code: response.status, data: null };
@@ -130,7 +130,6 @@ async function getKamarById(id) {
     }
 
     const responseJson = await response.json();
-    console.log("Response from server:", responseJson);
     return responseJson;
   } catch (error) {
     console.error("Unexpected error during getKamarById:", error);
@@ -138,16 +137,26 @@ async function getKamarById(id) {
   }
 }
 
-async function updateKamar(id, nameKamar, harga, size, description, kapasitas, Class, file, fasilitas) {
+async function updateKamar(
+  id,
+  nameKamar,
+  harga,
+  size,
+  description,
+  kapasitas,
+  Class,
+  file,
+  fasilitas
+) {
   try {
     const formData = new FormData();
     formData.append("nameKamar", nameKamar);
     formData.append("harga", harga);
     formData.append("description", description);
     formData.append("size", size);
-    formData.append("Class", Class); 
+    formData.append("Class", Class);
     formData.append("kapasitas", kapasitas);
-    formData.append("tipe", Class); 
+    formData.append("tipe", Class);
     formData.append("fasilitas", fasilitas);
 
     if (file) {
@@ -187,6 +196,12 @@ async function deleteKamar(id) {
   return { error: false, code: response.status, data: responseJson.data };
 }
 
+function logoutAccessToken() {
+  return localStorage.removeItem("accessToken");
+}
+
+
+
 export {
   getAccessToken,
   putAccessToken,
@@ -198,4 +213,5 @@ export {
   getKamarById,
   updateKamar,
   deleteKamar,
+  logoutAccessToken
 };

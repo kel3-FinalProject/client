@@ -1,8 +1,54 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import moment from 'moment';
+import { useState, useEffect } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 
 const OrderReceipt = () => {
+
+  const dataParams = useLocation();
+  /* 2. Get the param */
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [orderData, setOrderData] = useState({
+    namePelanggan: '',
+    name: '',
+    tanggal_checkin: '',
+    tanggal_checkout: '',
+    id: '',
+    id_kamar: '',
+    Class: '',
+    total: 0,
+  });
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    setOrderData({
+      namePelanggan: dataParams.state?.namaPelangganParam,
+      name: dataParams.state?.nameKamarParam,
+      tanggal_checkin: moment(dataParams.state?.startDateParam).format('DD MMMM YYYY'),
+      tanggal_checkout: moment(dataParams.state?.endDateParam).format('DD MMMM YYYY'),
+      id: id,
+      id_kamar: dataParams.state?.idParam,
+      Class: dataParams.state?.tipeKamarParam,
+      total: dataParams.state?.hargaKamarParam
+    })
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/Receipe');
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setOrderData(data); // Set the fetched data to the state
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+
+    fetchData();
+  }, []);
 
   const handleGoBack = () => {
     setShowConfirmation(true);
@@ -12,7 +58,7 @@ const OrderReceipt = () => {
     setShowConfirmation(false);
 
     if (confirmed) {
-      window.location.href = `/Reservasi`;
+      window.location.href = '/Reservasi';
     }
   };
 
@@ -23,17 +69,17 @@ const OrderReceipt = () => {
       <div className="flex justify-between mb-4">
         <div>
           <p className="text-sm">Nama Pelanggan:</p>
-          <p className="font-bold">John Doe</p>
+          <p className="font-bold">{orderData.namePelanggan}</p>
         </div>
 
         <div>
           <p className="text-sm">Tanggal Check In:</p>
-          <p className="font-bold">12 Januari 2023</p>
+          <p className="font-bold">{orderData.tanggal_checkin}</p>
         </div>
 
         <div>
           <p className="text-sm">Tanggal Check Out:</p>
-          <p className="font-bold">12 Januari 2023</p>
+          <p className="font-bold">{orderData.tanggal_checkout}</p>
         </div>
       </div>
 
@@ -42,24 +88,24 @@ const OrderReceipt = () => {
         <ul>
           <li className="flex justify-between">
             <span>Nomor Reservasi</span>
-            <span>1</span>
+            <span>{orderData.id}{orderData.name}</span>
           </li>
 
           <li className="flex justify-between">
             <span>Nomor kamar</span>
-            <span>2</span>
+            <span>{orderData.name}</span>
           </li>
 
           <li className="flex justify-between">
             <span>Tipe kamar</span>
-            <span>Regular</span>
+            <span>{orderData.Class}</span>
           </li>
         </ul>
       </div>
 
       <div className="border-t border-gray-300 pt-4 mb-4">
         <p className="text-sm">Total Pembayaran:</p>
-        <p className="font-bold text-xl">Rp 500.000</p>
+        <p className="font-bold text-xl">Rp.{orderData.total}</p>
       </div>
 
       <Link to={`/Home/`}>

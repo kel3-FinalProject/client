@@ -21,31 +21,34 @@ function EditKamar() {
     const fetchKamarData = async () => {
       try {
         const result = await getKamarById(id);
-  
-        if (result && !result.error) {
-  
-          if (result) {
-            setPreview(result.urlImage);
+        const data = result.data;
+        console.log(data);
+        if (data && !result.error) {
+          if (data) {
+            setPreview(data.urlImage);
             setRoomData({
-              nameKamar: result.nameKamar || "",
-              harga: result.harga || "",
-              size: result.size || "",
-              kapasitas: result.kapasitas || "",
-              Class: result.Class || "",
-              description: result.description || "",
-              fasilitas: result.fasilitas || "",
+              nameKamar: data.nameKamar || "",
+              harga: data.harga || "",
+              size: data.size || "",
+              kapasitas: data.kapasitas || "",
+              Class: data.Class || "",
+              description: data.description || "",
+              fasilitas: data.fasilitas || "",
             });
           } else {
             console.error("Data tidak valid");
           }
         } else {
-          console.error("Error dalam mendapatkan data:", result?.error?.message || "Response tidak valid");
+          console.error(
+            "Error dalam mendapatkan data:",
+            result?.error?.message || "Response tidak valid"
+          );
         }
       } catch (error) {
         console.error("Error tak terduga:", error);
       }
     };
-  
+
     fetchKamarData();
   }, [id]);
 
@@ -68,13 +71,23 @@ function EditKamar() {
       [name]: value,
     }));
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { harga, nameKamar, size, description, kapasitas} = roomData; 
-      const result = await updateKamar(id, nameKamar, harga, size, description, kapasitas, roomData.Class, file, roomData.fasilitas);
-  
+      const { harga, nameKamar, size, description, kapasitas } = roomData;
+      const result = await updateKamar(
+        id,
+        nameKamar,
+        harga,
+        size,
+        description,
+        kapasitas,
+        roomData.Class,
+        file,
+        roomData.fasilitas
+      );
+
       if (!result.error) {
         console.log("Data updated successfully");
         navigate("/Home-Admin", { replace: true });
@@ -85,7 +98,6 @@ function EditKamar() {
       console.error("Unexpected error:", error);
     }
   };
-
   return (
     <div className="bg-[#cecece] pt-5">
       <div className="bg-[#638ecb] max-w-4xl p-6 mx-auto rounded-md shadow-2xl">
@@ -103,7 +115,7 @@ function EditKamar() {
                 className="block w-full px-3 py-2 mt-2 text-gray-700 bg-gray-300 border border-gray-400 rounded-md focus:border-blue-500 focus:outline-none focus:ring"
                 value={roomData.nameKamar}
                 onChange={handleChange}
-                />
+              />
             </div>
 
             <div>

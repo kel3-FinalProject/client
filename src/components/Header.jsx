@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Logo from "../assets/img/logo/logo_hotel.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {logoutAccessToken} from "../utils/network";
 
 const Header = () => {
   const [header, setHeader] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +20,11 @@ const Header = () => {
 
   const location = useLocation();
   const isHomeAdmin = location.pathname === "/Home-Admin";
+
+    function handleLogout() {
+    logoutAccessToken();
+    navigate("/Login");
+  }
 
   return (
     <header
@@ -46,6 +53,12 @@ const Header = () => {
               >
                 Reservasi
               </Link>
+              <button
+                onClick={handleLogout}
+                className="hover:text-teal-700 transition font-[14px] uppercase"
+              >
+                LOGOUT
+              </button>
             </>
           ) : (
             <>
@@ -58,6 +71,12 @@ const Header = () => {
               <Link to="/Reservasi" className="hover:text-teal-700 transition">
                 Reservasi
               </Link>
+              <button
+                onClick={handleLogout}
+                className="hover:text-teal-700 transition"
+              >
+                LOGOUT
+              </button>
             </>
           )}
         </nav>
