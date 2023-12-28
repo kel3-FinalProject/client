@@ -4,19 +4,19 @@ import Room from "../components/Room";
 import { RoomContext } from '../pages/RoomContext';
 import { IoChevronBack } from "react-icons/io5";
 
-const Rooms = ({rooms}) => {
+const Rooms = () => {
   const location = useLocation();
   const isOnAdminPage = location.pathname.startsWith("/Home-Admin");
 
-  // const { fetchData } = useContext(RoomContext);
+  const { rooms, fetchData } = useContext(RoomContext);
 
-  // const fetchRoomsData = useCallback(() => {
-  //   fetchData();
-  // }, []);
+  const fetchRoomsData = useCallback(() => {
+    fetchData();
+  }, []);
 
-  // useEffect(() => {
-  //   fetchRoomsData();
-  // }, [fetchRoomsData]);
+  useEffect(() => {
+    fetchRoomsData();
+  }, [fetchRoomsData]);
   if (!rooms) {
  
     return <div>Loading...</div>;
