@@ -4,7 +4,7 @@ import { deleteKamar } from "../utils/network";
 
 const Room = ({ room }) => {
   const location = useLocation();
-  const { id, name, image, size, kapasitas, description } = room;
+  const { id, nameKamar, image, size, kapasitas, description } = room;
 
   const handleDelete = async (id) => {
     const deleted = await deleteKamar(id);
@@ -48,7 +48,7 @@ const Room = ({ room }) => {
         </div>
       </div>
       <div className="text-center">
-        <h3 className="h3 text-black">{name}</h3>
+        <h3 className="h3 text-black font-bold">{nameKamar}</h3>
         <p className="text-black max-w-[300px] mx-auto mb-3 lg:mb-6">
           {description.slice(0, 56)}
         </p>
